@@ -72,6 +72,7 @@ fn solve_single_word(english_word : &str) -> String {
 pub fn ashay_igspay_atinlay(english : &str) -> String {
     english
         .split(|c: char| {c.is_ascii_punctuation() || c.is_whitespace()})
+        .filter(|s| s.chars().count()> 0)
         .map(|ew: &str| solve_single_word(ew))
         .zip(
             english
