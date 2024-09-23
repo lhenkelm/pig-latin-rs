@@ -54,9 +54,18 @@ fn solve_single_word(english_word : &str) -> String {
         .char_indices().
         take_while(| (_, c)| !is_vowel(c))
         .unzip();
-    let first_consonants_to = first_consonant_indices.last().expect("missing: last consonant");    
-    let core : String = english_word.chars().skip(*first_consonants_to+1).collect();
-    format!("{core}{first_consonants}ay")
+    let mut first_consonants_to = *first_consonant_indices.last().expect("missing: last consonant");
+    let first_consonants = if 
+           first_consonants.chars().last().unwrap() == 'q'
+        && english_word.chars().skip(first_consonants_to+1).next().expect("missing: vowels") == 'u'
+    {
+        first_consonants_to+=1;
+        first_consonants + "u"
+    } else {
+        first_consonants
+    };
+    let core : String = english_word.chars().skip(first_consonants_to+1).collect();
+    apply_casing_like(&format!("{core}{first_consonants}ay"), english_word)
 }
 
 
