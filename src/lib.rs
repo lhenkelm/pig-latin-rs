@@ -18,7 +18,7 @@ fn apply_casing_like(text: &str, casing_of: &str) -> String {
                 casing_of
                 .chars()
                 .last()
-                .expect("last char")
+                .unwrap_or(' ') // default in an uncased char
             )
         )
     )
