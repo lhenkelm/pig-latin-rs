@@ -7,6 +7,24 @@ fn is_vowel(c: &char) -> bool {
     }
 }
 
+fn apply_casing_like(text: &str, casing_of: &str) -> String {
+    text
+    .chars()
+    .zip(casing_of.chars())
+    .map(
+        |(txt, csg)| {
+            if csg.is_lowercase() {
+                txt.to_lowercase().to_string()
+            } else if csg.is_uppercase() {
+                txt.to_uppercase().to_string()
+            } else {
+                txt.to_string()
+            }
+        }
+    )
+    .collect()
+}
+
 fn solve_single_word(english_word : &str) -> String {
     if english_word == "" {
         return "".to_string()
@@ -125,5 +143,15 @@ mod tests {
         assert_eq!(is_vowel(&' '), false);
         assert_eq!(is_vowel(&'.'), false);
         assert_eq!(is_vowel(&'7'), false);
+    }
+
+    #[test]
+    fn test_copy_casing() {
+        assert_eq!(apply_casing_like("foo", "bar"), String::from("foo"));
+        assert_eq!(apply_casing_like("foo", "bAr"), String::from("fOo"));
+        assert_eq!(apply_casing_like("foo", "BAR"), String::from("FOO"));
+        assert_eq!(apply_casing_like("fOo", "Bar"), String::from("Foo"));
+        assert_eq!(apply_casing_like("fOObar", "BarBaz"),String::from("FooBar"));
+        assert_eq!(apply_casing_like("AB", "ABC"), "AB");
     }
 }
