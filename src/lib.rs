@@ -1,5 +1,5 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
+pub fn ashay_igspay(english : &str) -> String {
+    english.to_owned()
 }
 
 #[cfg(test)]
@@ -7,8 +7,14 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+    fn test_first() {
+        let result = ashay_igspay("first");
+        assert_eq!(result, "irstfay");
+    }
+    
+    #[test]
+    fn test_apple() {
+        let result = ashay_igspay("apple");
+        assert_eq!(result, "applehay");
     }
 }
