@@ -1,4 +1,4 @@
-fn is_vowel(c: char) -> bool {
+fn is_vowel(c: &char) -> bool {
     match c {
         'a' | 'e' | 'i' | 'o' | 'u' => true,
         _ => false,
@@ -6,11 +6,23 @@ fn is_vowel(c: char) -> bool {
 }
 
 pub fn ashay_igspay_atinlay(english : &str) -> String {
-    let starts_voweled = is_vowel(english.chars().next().expect("got empty english"));
+    let starts_voweled = is_vowel(
+        &english
+        .chars()
+        .next()
+        .expect("got empty english")
+    );
     if starts_voweled {
         return format!("{english}hay");
     }
-    english.to_owned()
+    let (first_consonant_indices, first_consonants) : (Vec<usize>, String) = 
+        english
+        .char_indices().
+        take_while(| (_, c)| !is_vowel(c))
+        .unzip();
+    let first_consonants_to = first_consonant_indices.last().expect("missing: last consonant");    
+    let core : String = english.chars().skip(*first_consonants_to+1).collect();
+    format!("{core}{first_consonants}ay")
 }
 
 #[cfg(test)]
@@ -83,13 +95,13 @@ mod tests {
     // units
     #[test]
     fn test_is_vowel() {
-        assert_eq!(is_vowel('a'), true);
-        assert_eq!(is_vowel('u'), true);
-        assert_eq!(is_vowel('k'), false);
-        assert_eq!(is_vowel('q'), false);
-        assert_eq!(is_vowel('f'), false);
-        assert_eq!(is_vowel(' '), false);
-        assert_eq!(is_vowel('.'), false);
-        assert_eq!(is_vowel('7'), false);
+        assert_eq!(is_vowel(&'a'), true);
+        assert_eq!(is_vowel(&'u'), true);
+        assert_eq!(is_vowel(&'k'), false);
+        assert_eq!(is_vowel(&'q'), false);
+        assert_eq!(is_vowel(&'f'), false);
+        assert_eq!(is_vowel(&' '), false);
+        assert_eq!(is_vowel(&'.'), false);
+        assert_eq!(is_vowel(&'7'), false);
     }
 }
