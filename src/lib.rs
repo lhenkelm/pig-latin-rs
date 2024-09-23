@@ -1,3 +1,5 @@
+use std::iter::repeat;
+
 fn is_vowel(c: &char) -> bool {
     match c {
         'a' | 'e' | 'i' | 'o' | 'u' => true,
@@ -6,6 +8,9 @@ fn is_vowel(c: &char) -> bool {
 }
 
 fn solve_single_word(english_word : &str) -> String {
+    if english_word == "" {
+        return "".to_string()
+    }
     let starts_voweled = is_vowel(
         &english_word
         .chars()
@@ -25,8 +30,21 @@ fn solve_single_word(english_word : &str) -> String {
     format!("{core}{first_consonants}ay")
 }
 
+
 pub fn ashay_igspay_atinlay(english : &str) -> String {
-    solve_single_word(english)
+    english
+        .split(|c: char| {c.is_ascii_punctuation() || c.is_whitespace()})
+        .map(|ew: &str| solve_single_word(ew))
+        .zip(
+            english
+            .split(
+                |c: char| {(!c.is_ascii_punctuation()) && (!c.is_whitespace())}
+            )
+            .filter(|s| s.chars().count()> 0)
+            .chain(repeat(""))
+        )
+        .map(|(word, delim)| word + delim)
+        .collect()
 }
 
 #[cfg(test)]
