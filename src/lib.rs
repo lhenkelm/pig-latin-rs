@@ -1,4 +1,4 @@
-use std::iter::repeat;
+use std::iter::{self, repeat};
 
 fn is_vowel(c: &char) -> bool {
     match c {
@@ -10,7 +10,18 @@ fn is_vowel(c: &char) -> bool {
 fn apply_casing_like(text: &str, casing_of: &str) -> String {
     text
     .chars()
-    .zip(casing_of.chars())
+    .zip(
+        casing_of
+        .chars()
+        .chain(
+            iter::repeat(
+                casing_of
+                .chars()
+                .last()
+                .expect("last char")
+            )
+        )
+    )
     .map(
         |(txt, csg)| {
             if csg.is_lowercase() {
@@ -154,5 +165,11 @@ mod tests {
         assert_eq!(apply_casing_like("fOObar", "BarBaz"),String::from("FooBar"));
         assert_eq!(apply_casing_like("AB", "ABC"), "AB");
         assert_eq!(apply_casing_like("AbCd", "Ab"), "Abcd");
+    }
+
+    #[test]
+    fn test_copy_casing_empty() {
+        assert_eq!(apply_casing_like("", "Hello"), "");
+        assert_eq!(apply_casing_like("Hello", ""), "Hello");
     }
 }
