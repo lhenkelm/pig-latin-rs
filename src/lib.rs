@@ -1,5 +1,13 @@
+fn is_vowel(c: char) -> bool {
+    match c {
+        'a' | 'e' | 'i' | 'o' | 'u' => true,
+        _ => false,
+    }
+}
+
 pub fn ashay_igspay_atinlay(english : &str) -> String {
-    english.to_owned()
+    // english.chars().take(1)
+    String::new()
 }
 
 #[cfg(test)]
@@ -61,5 +69,18 @@ mod tests {
     fn test_easy_innit() {
         let result = ashay_igspay_atinlay("This is all quite easy, is it not?");
         assert_eq!(result, "Isthay ishay allhay itequay easyhay, ishay ithay otnay?")
+    }
+
+    // units
+    #[test]
+    fn test_is_vowel() {
+        assert_eq!(is_vowel('a'), true);
+        assert_eq!(is_vowel('u'), true);
+        assert_eq!(is_vowel('k'), false);
+        assert_eq!(is_vowel('q'), false);
+        assert_eq!(is_vowel('f'), false);
+        assert_eq!(is_vowel(' '), false);
+        assert_eq!(is_vowel('.'), false);
+        assert_eq!(is_vowel('7'), false);
     }
 }
