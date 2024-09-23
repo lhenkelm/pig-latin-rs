@@ -5,24 +5,28 @@ fn is_vowel(c: &char) -> bool {
     }
 }
 
-pub fn ashay_igspay_atinlay(english : &str) -> String {
+fn solve_single_word(english_word : &str) -> String {
     let starts_voweled = is_vowel(
-        &english
+        &english_word
         .chars()
         .next()
-        .expect("got empty english")
+        .expect("got empty english_word")
     );
     if starts_voweled {
-        return format!("{english}hay");
+        return format!("{english_word}hay");
     }
     let (first_consonant_indices, first_consonants) : (Vec<usize>, String) = 
-        english
+        english_word
         .char_indices().
         take_while(| (_, c)| !is_vowel(c))
         .unzip();
     let first_consonants_to = first_consonant_indices.last().expect("missing: last consonant");    
-    let core : String = english.chars().skip(*first_consonants_to+1).collect();
+    let core : String = english_word.chars().skip(*first_consonants_to+1).collect();
     format!("{core}{first_consonants}ay")
+}
+
+pub fn ashay_igspay_atinlay(english : &str) -> String {
+    solve_single_word(english)
 }
 
 #[cfg(test)]
