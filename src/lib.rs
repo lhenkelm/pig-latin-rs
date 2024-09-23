@@ -6,8 +6,11 @@ fn is_vowel(c: char) -> bool {
 }
 
 pub fn ashay_igspay_atinlay(english : &str) -> String {
-    // english.chars().take(1)
-    String::new()
+    let starts_voweled = is_vowel(english.chars().next().expect("got empty english"));
+    if starts_voweled {
+        return format!("{english}hay");
+    }
+    english.to_owned()
 }
 
 #[cfg(test)]
