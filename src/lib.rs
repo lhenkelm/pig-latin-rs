@@ -71,6 +71,12 @@ mod tests {
         assert_eq!(result, "Isthay ishay allhay itequay easyhay, ishay ithay otnay?")
     }
 
+    // edge cases and regressions
+    #[test]
+    fn test_empty() {
+        assert_eq!(ashay_igspay_atinlay(""), "");
+    }
+
     // units
     #[test]
     fn test_is_vowel() {
