@@ -153,5 +153,6 @@ mod tests {
         assert_eq!(apply_casing_like("fOo", "Bar"), String::from("Foo"));
         assert_eq!(apply_casing_like("fOObar", "BarBaz"),String::from("FooBar"));
         assert_eq!(apply_casing_like("AB", "ABC"), "AB");
+        assert_eq!(apply_casing_like("AbCd", "Ab"), "Abcd");
     }
 }
