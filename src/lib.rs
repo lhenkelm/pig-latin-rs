@@ -1,3 +1,32 @@
+//! # Pig-Latin
+//! 
+//! This crate provides functions for translating English into Pig-Latin.
+//! The advantage of [Pig-Latin](https://en.wikipedia.org/wiki/Pig_Latin) 
+//! is its extreme suitability to machine translation, without requiring
+//! any kind of machine learning (so long as you translate from English).
+//!
+//! The general purpose entry point is [`pig_latin::translate`](crate::translate). 
+//! In the special case of single-word inputs, 
+//! [`pig_latin::translate_word`](crate::translate_word) may be slightly faster
+//! -- but may provide wrong results on non-single-word inputs, and behavior
+//! on such inputs may change without warning.
+//!  
+//! ## One True Dialect
+//! 
+//!   > Ash nazg durbatulûk, ash nazg gimbatul, ash nazg thrakatulûk, agh burzum-ishi krimpatul  
+//!                -- Inspiration, by [one most humble and demure](https://google.gprivate.com/search.php?search?q=Sauron).
+//! 
+//! There exists more than one dialect of Pig-Latin. Because all other dialects
+//! are *stinky*, __incorrect__, ***and annoying***, `pig_latin` implements only the One True
+//! Dialect of Pig-Latin (OTDoPL). OTDoPL is love, OTDoPL is life, and these are
+//! its rules: 
+//!  - The general suffix is "ay". 
+//!  - The suffix for English words starting with a vowel is "hay".
+//!  - The vowel "u", if preceded by the consonant "q", is treated
+//!    as "part of" the consonant as far as translation is concerned.
+//!     - This is done to preserve pronouncability according to English
+//!       phonetics.
+
 use std::iter::repeat;
 
 pub fn translate(english : &str) -> String {
