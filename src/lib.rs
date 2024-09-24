@@ -1,10 +1,10 @@
 use std::iter::repeat;
 
-pub fn sentence(english : &str) -> String {
+pub fn translate(english : &str) -> String {
     english
         .split(|c: char| {c.is_ascii_punctuation() || c.is_whitespace()})
         .filter(|s| s.chars().count()> 0)
-        .map(|ew: &str| word(ew))
+        .map(|ew: &str| translate_word(ew))
         .zip(
             english
             .split(
@@ -17,7 +17,7 @@ pub fn sentence(english : &str) -> String {
         .collect()
 }
 
-pub use crate::details::word;
+pub use crate::details::translate_word;
 
 #[cfg(test)]
 mod tests {
@@ -26,71 +26,71 @@ mod tests {
     // consonant examples
     #[test]
     fn first() {
-        let result = sentence("first");
+        let result = translate("first");
         assert_eq!(result, "irstfay");
     }
 
     #[test]
     fn pigs() {
-        let result = sentence("pigs");
+        let result = translate("pigs");
         assert_eq!(result, "igspay");
     }
 
     #[test]
     fn latin() {
-        let result = sentence("latin");
+        let result = translate("latin");
         assert_eq!(result, "atinlay");
     }
     
     #[test]
     fn banana() {
-        let result = sentence("banana");
+        let result = translate("banana");
         assert_eq!(result, "ananabay");
     }
 
     // vowel examples 
     #[test]
     fn apple() {
-        let result = sentence("apple");
+        let result = translate("apple");
         assert_eq!(result, "applehay");
     }
     
     #[test]
     fn ear() {
-        let result = sentence("ear");
+        let result = translate("ear");
         assert_eq!(result, "earhay");
     }
     
     #[test]
     fn omelet() {
-        let result = sentence("omelet");
+        let result = translate("omelet");
         assert_eq!(result, "omelethay");
     }
 
     #[test]
     fn words_is_sentence_if_word_input() {
         for example in ["first", "pigs", "latin", "apple", "banana", "ear", "omelet"] {
-            assert_eq!(word(example), sentence(example))
+            assert_eq!(translate_word(example), translate(example))
         }
     }
     
     // sentence examples
     #[test]
     fn this_is_pigs_latin() {
-        let result = sentence("This is pigs latin.");
+        let result = translate("This is pigs latin.");
         assert_eq!(result, "Isthay ishay igspay atinlay.")
     }
     
     #[test]
     fn easy_innit() {
-        let result = sentence("This is all quite easy, is it not?");
+        let result = translate("This is all quite easy, is it not?");
         assert_eq!(result, "Isthay ishay allhay itequay easyhay, ishay ithay otnay?")
     }
 
     // edge cases and regressions
     #[test]
     fn empty() {
-        assert_eq!(sentence(""), "");
+        assert_eq!(translate(""), "");
     }
 
 }
@@ -133,7 +133,7 @@ mod details {
         .collect()
     }
 
-    pub fn word(english_word : &str) -> String {
+    pub fn translate_word(english_word : &str) -> String {
         if english_word == "" {
             return "".to_string()
         }
