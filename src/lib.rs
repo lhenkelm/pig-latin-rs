@@ -1,6 +1,7 @@
 //! # Pig-Latin
 //! 
 //! This crate provides functions for translating English into Pig-Latin.
+//! 
 //! The advantage of [Pig-Latin](https://en.wikipedia.org/wiki/Pig_Latin) 
 //! is its extreme suitability to machine translation, without requiring
 //! any kind of machine learning (so long as you translate from English).
@@ -14,7 +15,7 @@
 //! ## One True Dialect
 //! 
 //!   > Ash nazg durbatulûk, ash nazg gimbatul, ash nazg thrakatulûk, agh burzum-ishi krimpatul  
-//!                -- Inspiration, by [one most humble and demure](https://google.gprivate.com/search.php?search?q=Sauron).
+//!     -- Inspiration, by [one most humble and demure](https://google.gprivate.com/search.php?search?q=Sauron).
 //! 
 //! There exists more than one dialect of Pig-Latin. Because all other dialects
 //! are *stinky*, __incorrect__, ***and annoying***, `pig_latin` implements only the One True
@@ -29,6 +30,44 @@
 
 use std::iter::repeat;
 
+/// # Translate English into Pig-Latin.
+/// 
+/// This function translates arbitrary English text into [OTDoPL](crate#one-true-dialect) Pig-Latin.
+/// 
+/// This is done by tokenizing the text into words (contiguous, non-whitespace, non-punctuation
+/// substrings), translating the words (cf. [`translate_word`]), and re-inserting the non-word 
+/// characters. Thus, whitespace, layout, structure, and punctuation should be preserved in
+/// translation. 
+/// 
+/// ## Examples
+/// 
+/// Translate a word:
+/// ```rust
+/// # use pig_latin::translate;
+/// assert_eq!(translate("Hello"), String::from("Ellohay"));
+/// ```
+/// 
+/// Translate a sentence:
+/// ```rust
+/// # use pig_latin::translate;
+/// assert_eq!(translate("Hello world!"), String::from("Ellohay orldway!"));
+/// ```
+/// 
+/// Translate words containing "Q":
+/// 
+/// ```rust
+/// # use pig_latin::translate;
+/// assert_eq!(translate("Question:"), String::from("Estionquay:"));
+/// ```
+/// 
+/// Translate words starting with vowels:
+/// ```rust
+/// # use pig_latin::translate;
+/// assert_eq!(
+///     translate("Early-Adopters are ecstatic?"), 
+///     String::from("Earlyhay-Adoptershay arehay ecstatichay?")
+/// );
+/// ```
 pub fn translate(english : &str) -> String {
     english
         .split(|c: char| {c.is_ascii_punctuation() || c.is_whitespace()})
@@ -124,8 +163,12 @@ mod tests {
 
 }
 
+/// implementation details go here, and exposed function's implementations
+/// that are not intended as default entry points
 mod details {
     use std::iter;
+        
+    /// Return `true` if `c` is an ASCII-vowel, else `false` (uncased).
     fn is_vowel(c: &char) -> bool {
         let c = c.to_ascii_lowercase();
         match c {
@@ -134,6 +177,11 @@ mod details {
         }
     }
 
+    /// Transfer the sequence of upper/lower casing from one string to another.
+    /// 
+    /// Identifies the sequence of UPPER/lower casing of characters
+    /// in `casing_of`, then apply the same casing to `text`.
+    /// Apart from the casing, the content of `text` remains unchanged.
     fn apply_casing_like(text: &str, casing_of: &str) -> String {
         text
         .chars()
@@ -163,6 +211,32 @@ mod details {
         .collect()
     }
 
+    /// # Translate a single english word into Pig-Latin.
+    /// 
+    /// Translate a single word into [OTDoPL](crate#one-true-dialect) Pig Latin.
+    /// 
+    /// The input is assumed to be a single word, and this is not checked.
+    /// "Single word" means that there are no special characters, no whitespace,
+    /// and no punctuation anywhere in the string. In other words, each character
+    /// should be able to be either uppercase or lowercase, and either a vowel or
+    /// a consonant.
+    ///  
+    /// **Hint: If you are not fully able to guarantee single-word inputs,
+    /// use [`crate::translate`] instead.**
+    /// 
+    ///  ## Examples
+    /// 
+    /// Works fine for words. Don't use it for non-word strings!
+    /// ```rust
+    /// # use pig_latin::translate_word;
+    /// assert_eq!(translate_word("Rar"), String::from("Array"));
+    /// ```
+    /// 
+    /// The empty string is, technically, a word in our above technical sense:
+    /// ```rust
+    /// # use pig_latin::translate_word;
+    /// assert_eq!(translate_word(""), String::new());
+    /// ```
     pub fn translate_word(english_word : &str) -> String {
         if english_word == "" {
             return "".to_string()
