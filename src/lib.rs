@@ -1,79 +1,10 @@
-use std::iter::{self, repeat};
+use std::iter::repeat;
 
-fn is_vowel(c: &char) -> bool {
-    match c {
-        'a' | 'e' | 'i' | 'o' | 'u' => true,
-        _ => false,
-    }
-}
-
-fn apply_casing_like(text: &str, casing_of: &str) -> String {
-    text
-    .chars()
-    .zip(
-        casing_of
-        .chars()
-        .chain(
-            iter::repeat(
-                casing_of
-                .chars()
-                .last()
-                .unwrap_or(' ') // default in an uncased char
-            )
-        )
-    )
-    .map(
-        |(txt, csg)| {
-            if csg.is_lowercase() {
-                txt.to_lowercase().to_string()
-            } else if csg.is_uppercase() {
-                txt.to_uppercase().to_string()
-            } else {
-                txt.to_string()
-            }
-        }
-    )
-    .collect()
-}
-
-fn solve_single_word(english_word : &str) -> String {
-    if english_word == "" {
-        return "".to_string()
-    }
-    let starts_voweled = is_vowel(
-        &english_word
-        .chars()
-        .next()
-        .expect("got empty english_word")
-    );
-    if starts_voweled {
-        return format!("{english_word}hay");
-    }
-    let (first_consonant_indices, first_consonants) : (Vec<usize>, String) = 
-        english_word
-        .char_indices().
-        take_while(| (_, c)| !is_vowel(c))
-        .unzip();
-    let mut first_consonants_to = *first_consonant_indices.last().expect("missing: last consonant");
-    let first_consonants = if 
-           first_consonants.chars().last().unwrap() == 'q'
-        && english_word.chars().skip(first_consonants_to+1).next().expect("missing: vowels") == 'u'
-    {
-        first_consonants_to+=1;
-        first_consonants + "u"
-    } else {
-        first_consonants
-    };
-    let core : String = english_word.chars().skip(first_consonants_to+1).collect();
-    apply_casing_like(&format!("{core}{first_consonants}ay"), english_word)
-}
-
-
-pub fn ashay_igspay_atinlay(english : &str) -> String {
+pub fn sentence(english : &str) -> String {
     english
         .split(|c: char| {c.is_ascii_punctuation() || c.is_whitespace()})
         .filter(|s| s.chars().count()> 0)
-        .map(|ew: &str| solve_single_word(ew))
+        .map(|ew: &str| word(ew))
         .zip(
             english
             .split(
@@ -86,100 +17,187 @@ pub fn ashay_igspay_atinlay(english : &str) -> String {
         .collect()
 }
 
+pub use crate::details::word;
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     // consonant examples
     #[test]
-    fn test_first() {
-        let result = ashay_igspay_atinlay("first");
+    fn first() {
+        let result = sentence("first");
         assert_eq!(result, "irstfay");
     }
 
     #[test]
-    fn test_pigs() {
-        let result = ashay_igspay_atinlay("pigs");
+    fn pigs() {
+        let result = sentence("pigs");
         assert_eq!(result, "igspay");
     }
 
     #[test]
-    fn test_latin() {
-        let result = ashay_igspay_atinlay("latin");
+    fn latin() {
+        let result = sentence("latin");
         assert_eq!(result, "atinlay");
     }
     
     #[test]
-    fn test_banana() {
-        let result = ashay_igspay_atinlay("banana");
+    fn banana() {
+        let result = sentence("banana");
         assert_eq!(result, "ananabay");
     }
 
     // vowel examples 
     #[test]
-    fn test_apple() {
-        let result = ashay_igspay_atinlay("apple");
+    fn apple() {
+        let result = sentence("apple");
         assert_eq!(result, "applehay");
     }
     
     #[test]
-    fn test_ear() {
-        let result = ashay_igspay_atinlay("ear");
+    fn ear() {
+        let result = sentence("ear");
         assert_eq!(result, "earhay");
     }
     
     #[test]
-    fn test_omelet() {
-        let result = ashay_igspay_atinlay("omelet");
+    fn omelet() {
+        let result = sentence("omelet");
         assert_eq!(result, "omelethay");
+    }
+
+    #[test]
+    fn words_is_sentence_if_word_input() {
+        for example in ["first", "pigs", "latin", "apple", "banana", "ear", "omelet"] {
+            assert_eq!(word(example), sentence(example))
+        }
     }
     
     // sentence examples
     #[test]
-    fn test_this_is_pigs_latin() {
-        let result = ashay_igspay_atinlay("This is pigs latin.");
+    fn this_is_pigs_latin() {
+        let result = sentence("This is pigs latin.");
         assert_eq!(result, "Isthay ishay igspay atinlay.")
     }
     
     #[test]
-    fn test_easy_innit() {
-        let result = ashay_igspay_atinlay("This is all quite easy, is it not?");
+    fn easy_innit() {
+        let result = sentence("This is all quite easy, is it not?");
         assert_eq!(result, "Isthay ishay allhay itequay easyhay, ishay ithay otnay?")
     }
 
     // edge cases and regressions
     #[test]
-    fn test_empty() {
-        assert_eq!(ashay_igspay_atinlay(""), "");
+    fn empty() {
+        assert_eq!(sentence(""), "");
     }
 
-    // units
-    #[test]
-    fn test_is_vowel() {
-        assert_eq!(is_vowel(&'a'), true);
-        assert_eq!(is_vowel(&'u'), true);
-        assert_eq!(is_vowel(&'k'), false);
-        assert_eq!(is_vowel(&'q'), false);
-        assert_eq!(is_vowel(&'f'), false);
-        assert_eq!(is_vowel(&' '), false);
-        assert_eq!(is_vowel(&'.'), false);
-        assert_eq!(is_vowel(&'7'), false);
+}
+
+mod details {
+    use std::iter;
+    fn is_vowel(c: &char) -> bool {
+        match c {
+            'a' | 'e' | 'i' | 'o' | 'u' => true,
+            _ => false,
+        }
     }
 
-    #[test]
-    fn test_copy_casing() {
-        assert_eq!(apply_casing_like("foo", "bar"), String::from("foo"));
-        assert_eq!(apply_casing_like("foo", "bAr"), String::from("fOo"));
-        assert_eq!(apply_casing_like("foo", "BAR"), String::from("FOO"));
-        assert_eq!(apply_casing_like("fOo", "Bar"), String::from("Foo"));
-        assert_eq!(apply_casing_like("fOObar", "BarBaz"),String::from("FooBar"));
-        assert_eq!(apply_casing_like("AB", "ABC"), "AB");
-        assert_eq!(apply_casing_like("AbCd", "Ab"), "Abcd");
+    fn apply_casing_like(text: &str, casing_of: &str) -> String {
+        text
+        .chars()
+        .zip(
+            casing_of
+            .chars()
+            .chain(
+                iter::repeat(
+                    casing_of
+                    .chars()
+                    .last()
+                    .unwrap_or(' ') // default in an uncased char
+                )
+            )
+        )
+        .map(
+            |(txt, csg)| {
+                if csg.is_lowercase() {
+                    txt.to_lowercase().to_string()
+                } else if csg.is_uppercase() {
+                    txt.to_uppercase().to_string()
+                } else {
+                    txt.to_string()
+                }
+            }
+        )
+        .collect()
     }
 
-    #[test]
-    fn test_copy_casing_empty() {
-        assert_eq!(apply_casing_like("", "Hello"), "");
-        assert_eq!(apply_casing_like("Hello", ""), "Hello");
+    pub fn word(english_word : &str) -> String {
+        if english_word == "" {
+            return "".to_string()
+        }
+        let starts_voweled = is_vowel(
+            &english_word
+            .chars()
+            .next()
+            .expect("got empty english_word")
+        );
+        if starts_voweled {
+            return format!("{english_word}hay");
+        }
+        let (first_consonant_indices, first_consonants) : (Vec<usize>, String) = 
+            english_word
+            .char_indices().
+            take_while(| (_, c)| !is_vowel(c))
+            .unzip();
+        let mut first_consonants_to = *first_consonant_indices.last().expect("missing: last consonant");
+        let first_consonants = if 
+               first_consonants.chars().last().unwrap() == 'q'
+            && english_word.chars().skip(first_consonants_to+1).next().expect("missing: vowels") == 'u'
+        {
+            first_consonants_to+=1;
+            first_consonants + "u"
+        } else {
+            first_consonants
+        };
+        let core : String = english_word.chars().skip(first_consonants_to+1).collect();
+        apply_casing_like(&format!("{core}{first_consonants}ay"), english_word)
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+
+        // units
+        #[test]
+        fn _is_vowel() {
+            assert_eq!(is_vowel(&'a'), true);
+            assert_eq!(is_vowel(&'u'), true);
+            assert_eq!(is_vowel(&'k'), false);
+            assert_eq!(is_vowel(&'q'), false);
+            assert_eq!(is_vowel(&'f'), false);
+            assert_eq!(is_vowel(&' '), false);
+            assert_eq!(is_vowel(&'.'), false);
+            assert_eq!(is_vowel(&'7'), false);
+        }
+
+        #[test]
+        fn copy_casing() {
+            assert_eq!(apply_casing_like("foo", "bar"), String::from("foo"));
+            assert_eq!(apply_casing_like("foo", "bAr"), String::from("fOo"));
+            assert_eq!(apply_casing_like("foo", "BAR"), String::from("FOO"));
+            assert_eq!(apply_casing_like("fOo", "Bar"), String::from("Foo"));
+            assert_eq!(apply_casing_like("fOObar", "BarBaz"),String::from("FooBar"));
+            assert_eq!(apply_casing_like("AB", "ABC"), "AB");
+            assert_eq!(apply_casing_like("AbCd", "Ab"), "Abcd");
+        }
+
+        #[test]
+        fn copy_casing_empty() {
+            assert_eq!(apply_casing_like("", "Hello"), "");
+            assert_eq!(apply_casing_like("Hello", ""), "Hello");
+        }
     }
 }
+
