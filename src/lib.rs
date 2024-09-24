@@ -127,6 +127,7 @@ mod tests {
 mod details {
     use std::iter;
     fn is_vowel(c: &char) -> bool {
+        let c = c.to_ascii_lowercase();
         match c {
             'a' | 'e' | 'i' | 'o' | 'u' => true,
             _ => false,
@@ -181,8 +182,9 @@ mod details {
             take_while(| (_, c)| !is_vowel(c))
             .unzip();
         let mut first_consonants_to = *first_consonant_indices.last().expect("missing: last consonant");
+        
         let first_consonants = if 
-               first_consonants.chars().last().unwrap() == 'q'
+               first_consonants.chars().last().unwrap().to_ascii_lowercase() == 'q' 
             && english_word.chars().skip(first_consonants_to+1).next().expect("missing: vowels") == 'u'
         {
             first_consonants_to+=1;
