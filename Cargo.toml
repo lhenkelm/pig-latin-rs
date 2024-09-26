@@ -3,15 +3,13 @@ name = "pig_latin"
 version = "0.1.0"
 edition = "2021"
 
-[dependencies]
+[dev-dependencies]
+criterion = { version = "0.4", features = ["html_reports"] }
 lipsum = "0.9.1"
 rand = "0.8.5"
 rand_core = "0.6.4"
 rand_pcg = "0.3.1"
 
-[dev-dependencies]
-criterion = { version = "0.4", features = ["html_reports"] }
-
 [[bench]]
-name = "translation benchmark"
+name = "translation_benchmark"
 harness = false
