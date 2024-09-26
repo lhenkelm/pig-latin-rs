@@ -27,6 +27,25 @@
 //!    as "part of" the consonant as far as translation is concerned.
 //!     - This is done to preserve pronouncability according to English
 //!       phonetics.
+//! 
+//! ## Example
+//! 
+//! ```rust
+//! use pig_latin;
+//! 
+//! let english_input = "This crate provides functions for translating English into Pig-Latin.
+//! 
+//! The advantage of Pig-Latin is its extreme suitability to machine translation,
+//! without requiring any kind of machine learning (so long as you translate from English).";
+//! 
+//! 
+//!let expected_pig_latin = "Isthay atecray ovidespray unctionsfay orfay anslatingtray Englishhay intohay Igpay-Atinlay.
+//! 
+//! Ethay advantagehay ofhay Igpay-Atinlay ishay itshay extremehay uitabilitysay otay achinemay anslationtray,
+//! ithoutway equiringray anyhay indkay ofhay achinemay earninglay (osay onglay ashay ouyay anslatetray omfray Englishhay)."; 
+//! 
+//! assert_eq!(pig_latin::translate(&english_input), expected_pig_latin);
+//! ```
 
 use std::iter::repeat;
 
