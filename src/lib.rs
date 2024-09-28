@@ -322,6 +322,13 @@ mod details {
             assert_eq!(apply_casing_like("", "Hello"), "");
             assert_eq!(apply_casing_like("Hello", ""), "Hello");
         }
+
+        #[test]
+        fn translate_word_just_q_or_qu(){
+            assert_eq!(translate_word("q"), "qay");
+            assert_eq!(translate_word("qu"), "quay");
+            assert_eq!(translate_word("quaint"), "aintquay");
+        }
     }
 }
 
