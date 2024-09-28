@@ -258,8 +258,11 @@ mod details {
             }
             text_byte_idx += text_char.len_utf8();
         }
-        // FIXME: try buffer + push
-        substrings.into_iter().collect()
+        let mut result = String::with_capacity(text.len());
+        for part in substrings {
+            result.push_str(&part);
+        }
+        result
     }
 
     /// # Translate a single english word into Pig-Latin.
