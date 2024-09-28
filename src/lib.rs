@@ -277,13 +277,13 @@ mod details {
             byte_idx_cut_at += char.len_utf8();
         }
 
-        const N_QU : usize = "qu".len();
-        const N_Q : usize = 'q'.len_utf8();
-        const N_U: usize = 'u'.len_utf8();
-        if english_word.len() >= N_QU { 
-            if byte_idx_cut_at == N_Q && english_word[0..N_QU].to_ascii_lowercase() == "qu" 
+        if english_word.len() > byte_idx_cut_at { 
+            let mut chars  = english_word[..byte_idx_cut_at+1].chars();
+            if 
+                   chars.next().unwrap().to_ascii_lowercase() == 'q' 
+                && chars.next().unwrap().to_ascii_lowercase() == 'u'
             {
-                byte_idx_cut_at += N_U;
+                byte_idx_cut_at += 'u'.len_utf8();
             };
         }
         let mut translated = String::with_capacity(english_word.len() + "ay".len());
