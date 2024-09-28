@@ -258,7 +258,8 @@ mod details {
             }
             text_byte_idx += text_char.len_utf8();
         }
-        // FIXME: try buffer + push
+        // NB: I already tried with_capacity + push_str here,
+        // but it slows the benchmark down
         substrings.into_iter().collect()
     }
 
