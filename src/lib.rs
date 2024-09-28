@@ -220,7 +220,13 @@ mod details {
     /// in `casing_of`, then apply the same casing to `text`.
     /// Apart from the casing, the content of `text` remains unchanged.
     fn apply_casing_like(text: &str, casing_of: &str) -> String {
-        let mut substrings = Vec::with_capacity(5);
+        // Re: substrings' capacity: two cases are common:
+        // 1.: "Aaaa","Bb"; "aaaa","bb" -> no edits needed, there is just one big substring
+        // 2.: "aaAa", "Bb" -> need 4 substrings: ["A" (edit), "a" (keep), "a" (edit), "a" (keep)]
+        // Capacity four is small but pre-allocs enough for the common cases.
+        // Over-allocating for the first case is fine, since the string (not its buffer)
+        // is just 24 large.
+        let mut substrings = Vec::with_capacity(4);
         let mut text_byte_idx = 0;
         let mut last_edit = 0;
         let mut target_case = CharCase::Eh;
