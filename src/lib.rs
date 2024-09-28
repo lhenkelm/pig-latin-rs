@@ -47,7 +47,8 @@
 //! assert_eq!(pig_latin::translate(&english_input), expected_pig_latin);
 //! ```
 
-use std::iter::repeat;
+use itertools::Itertools;
+use std::iter::once;
 
 /// # Translate English into Pig-Latin.
 ///
@@ -88,17 +89,25 @@ use std::iter::repeat;
 /// );
 /// ```
 pub fn translate(english: &str) -> String {
-    english
-        .split(|c: char| c.is_ascii_punctuation() || c.is_whitespace())
-        .filter(|s| s.chars().count() > 0)
-        .map(|ew: &str| translate_word(ew))
-        .zip(
+    once((0, false))
+        .chain(
             english
-                .split(|c: char| (!c.is_ascii_punctuation()) && (!c.is_whitespace()))
-                .filter(|s| s.chars().count() > 0)
-                .chain(repeat("")),
+                .match_indices(|c: char| c.is_ascii_punctuation() || c.is_whitespace())
+                .map(|(match_idx, match_str)| (match_idx, match_idx + match_str.len()))
+                .flat_map(|(match_start, match_end)| {
+                    once((match_start, true)).chain(once((match_end, false)))
+                }),
         )
-        .map(|(word, delim)| word + delim)
+        .chain(once((english.len(), false)))
+        .tuple_windows::<(_, _)>()
+        .filter(|((from, _), (to, _))| to > from)
+        .map(|((from, is_punct_or_ws), (to, _))| {
+            if !is_punct_or_ws {
+                translate_word(&english[from..to])
+            } else {
+                english[from..to].to_owned()
+            }
+        })
         .collect()
 }
 
