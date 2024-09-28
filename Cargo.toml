@@ -3,7 +3,7 @@ name = "pig_latin"
 version = "0.1.0"
 edition = "2021"
 
-[dev-dependencies]
+[dependencies]
 criterion = { version = "0.4", features = ["html_reports"] }
 lipsum = "0.9.1"
 rand = "0.8.5"
@@ -21,6 +21,11 @@ bench=false
 [[bin]]
 name="pig_latin"
 src="src/main.rs"
+bench=false
+
+[[bin]]
+name="lorem_ipsum_profiling"
+src="src/bin/lorem_ipsum_profiling.rs"
 bench=false
 
 [profile.profile]
