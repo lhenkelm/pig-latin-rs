@@ -286,14 +286,11 @@ mod details {
                 byte_idx_cut_at += 'u'.len_utf8();
             };
         }
-        apply_casing_like(
-            &format!(
-                "{}{}ay", 
-                &english_word[byte_idx_cut_at..], 
-                &english_word[..byte_idx_cut_at],
-            ),
-            english_word,
-        )
+        let mut translated = String::with_capacity(english_word.len() + "ay".len());
+        translated.push_str(&english_word[byte_idx_cut_at..]);
+        translated.push_str(&english_word[..byte_idx_cut_at]);
+        translated.push_str("ay");
+        apply_casing_like(&translated,english_word)
     }
 
     #[cfg(test)]
