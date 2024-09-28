@@ -13,3 +13,9 @@ repos:
         entry: cargo clippy --frozen
         language: system
         pass_filenames: false
+      - id: test
+        name: test
+        description: run unit and doc tests
+        entry: cargo test
+        language: system
+        pass_filenames: false
