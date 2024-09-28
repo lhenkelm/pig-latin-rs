@@ -220,8 +220,7 @@ mod details {
     /// in `casing_of`, then apply the same casing to `text`.
     /// Apart from the casing, the content of `text` remains unchanged.
     fn apply_casing_like(text: &str, casing_of: &str) -> String {
-        // FIXME: optimize capacity, decide dynamically?
-        let mut substrings = Vec::with_capacity(2);
+        let mut substrings = Vec::with_capacity(1);
         let mut text_byte_idx = 0;
         let mut last_edit = 0;
         let mut target_case = CharCase::Eh;
