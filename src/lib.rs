@@ -269,24 +269,31 @@ mod details {
         if starts_voweled {
             return format!("{english_word}hay");
         }
-        let (first_consonant_indices, first_consonants) : (Vec<usize>, String) = 
-            english_word
-            .char_indices().
-            take_while(| (_, c)| !is_vowel(c))
-            .unzip();
-        let mut first_consonants_to = *first_consonant_indices.last().expect("missing: last consonant");
-        
-        let first_consonants = if 
-               first_consonants.chars().last().unwrap().to_ascii_lowercase() == 'q' 
-            && english_word.chars().skip(first_consonants_to+1).next().expect("missing: vowels") == 'u'
-        {
-            first_consonants_to+=1;
-            first_consonants + "u"
-        } else {
-            first_consonants
-        };
-        let core : String = english_word.chars().skip(first_consonants_to+1).collect();
-        apply_casing_like(&format!("{core}{first_consonants}ay"), english_word)
+        let mut byte_idx_cut_at =0;
+        for char in english_word.chars() {
+            if is_vowel(&char) {
+                break
+            }
+            byte_idx_cut_at += char.len_utf8();
+        }
+
+        if english_word.len() > byte_idx_cut_at { 
+            let mut chars  = english_word[..byte_idx_cut_at+1].chars();
+            if 
+                   chars.next().unwrap().to_ascii_lowercase() == 'q' 
+                && chars.next().expect("missing: vowels") == 'u'
+            {
+                byte_idx_cut_at += 'u'.len_utf8();
+            };
+        }
+        apply_casing_like(
+            &format!(
+                "{}{}ay", 
+                &english_word[byte_idx_cut_at..], 
+                &english_word[..byte_idx_cut_at],
+            ),
+            english_word,
+        )
     }
 
     #[cfg(test)]
