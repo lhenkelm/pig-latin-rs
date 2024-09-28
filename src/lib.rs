@@ -220,13 +220,7 @@ mod details {
     /// in `casing_of`, then apply the same casing to `text`.
     /// Apart from the casing, the content of `text` remains unchanged.
     fn apply_casing_like(text: &str, casing_of: &str) -> String {
-        // Re: substrings' capacity: two cases are common:
-        // 1.: "Aaaa","Bb"; "aaaa","bb" -> no edits needed, there is just one big substring
-        // 2.: "aaAa", "Bb" -> need 4 substrings: ["A" (edit), "a" (keep), "a" (edit), "a" (keep)]
-        // Capacity four is small but pre-allocs enough for the common cases.
-        // Over-allocating for the first case is fine, since the string (not its buffer)
-        // is just 24 large.
-        let mut substrings = Vec::with_capacity(4);
+        let mut result = String::with_capacity(text.len());
         let mut text_byte_idx = 0;
         let mut last_edit = 0;
         let mut target_case = CharCase::Eh;
@@ -246,26 +240,30 @@ mod details {
             }
             if text_case != target_case && target_case != CharCase::Eh {
                 if text_byte_idx > last_edit {
-                    substrings.push(text[last_edit..text_byte_idx].to_owned());
+                    result.push_str(&text[last_edit..text_byte_idx]);
                 }
                 let end_edit = text_byte_idx+text_char.len_utf8();
-                substrings.push(
-                    match target_case {
-                        CharCase::Upper => text_char.to_uppercase().to_string(),
-                        CharCase::Lower => text_char.to_lowercase().to_string(),
-                        CharCase::Eh => panic!("{target_case:?} should be unreachable here"),
+                match target_case {
+                    CharCase::Upper => {
+                        for uc in text_char.to_uppercase(){
+                            result.push(uc);
+                        }
                     }
-                );
+                    CharCase::Lower => {
+                        for lc in text_char.to_lowercase(){
+                            result.push(lc);
+                        }
+                    }
+                    CharCase::Eh => panic!("{target_case:?} should be unreachable here"),
+                }
                 last_edit = end_edit;
             } else if text_byte_idx+1 == text.len() {
-                substrings.push(text[last_edit..text_byte_idx+1].to_owned());
+                result.push_str(&text[last_edit..text_byte_idx+1]);
                  
             }
             text_byte_idx += text_char.len_utf8();
         }
-        // NB: I already tried with_capacity + push_str here,
-        // but it slows the benchmark down
-        substrings.into_iter().collect()
+        result
     }
 
     /// # Translate a single english word into Pig-Latin.
