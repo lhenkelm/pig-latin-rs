@@ -22,3 +22,7 @@ bench=false
 name="pig_latin"
 src="src/main.rs"
 bench=false
+
+[profile.profile]
+inherits = "release"
+debug = true
