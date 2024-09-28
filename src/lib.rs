@@ -281,7 +281,7 @@ mod details {
             let mut chars  = english_word[..byte_idx_cut_at+1].chars();
             if 
                    chars.next().unwrap().to_ascii_lowercase() == 'q' 
-                && chars.next().expect("missing: vowels") == 'u'
+                && chars.next().unwrap().to_ascii_lowercase() == 'u'
             {
                 byte_idx_cut_at += 'u'.len_utf8();
             };
