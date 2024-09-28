@@ -2,15 +2,15 @@ use std::io;
 
 use pig_latin::translate;
 
-fn main()->io::Result<()>{
+fn main() -> io::Result<()> {
     let input_text = read_all_stdin()?;
     let translated = translate(&input_text);
     println!("{translated}");
     Ok(())
 }
 
-fn read_all_stdin() -> io::Result<String>{
-    let stdin =  io::stdin();
+fn read_all_stdin() -> io::Result<String> {
+    let stdin = io::stdin();
     let mut input_text = String::new();
     loop {
         match stdin.read_line(&mut input_text) {

@@ -1,14 +1,14 @@
 use std::hint::black_box;
 
-use rand_pcg::Pcg64Mcg;
-use rand_core::SeedableRng;
 use lipsum::lipsum_with_rng;
+use rand_core::SeedableRng;
+use rand_pcg::Pcg64Mcg;
 
 use pig_latin::translate;
 
-fn main(){
-    let mut total_in_bytes = 0; 
-    let mut total_out_bytes = 0; 
+fn main() {
+    let mut total_in_bytes = 0;
+    let mut total_out_bytes = 0;
     for i in 0..20 {
         let rng = Pcg64Mcg::seed_from_u64(i);
         let test_input = lipsum_with_rng(rng, 4_000_000);
