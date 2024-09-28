@@ -322,6 +322,11 @@ mod details {
         }
 
         #[test]
+        fn copy_casing_ligature() {
+            assert_eq!(apply_casing_like("ﬁre", "HELLO"), "FIRE");
+        }
+
+        #[test]
         fn copy_casing_empty() {
             assert_eq!(apply_casing_like("", "Hello"), "");
             assert_eq!(apply_casing_like("Hello", ""), "Hello");
