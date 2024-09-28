@@ -333,6 +333,14 @@ mod details {
             assert_eq!(translate_word("qu"), "quay");
             assert_eq!(translate_word("quaint"), "aintquay");
         }
+
+        #[test]
+        fn translate_word_upper_qu(){
+            assert_eq!(translate_word("QUERY"), "ERYQUAY");
+            assert_eq!(translate_word("query"), "eryquay");
+            assert_eq!(translate_word("qUeRy"), "eRyQuay");
+            assert_eq!(translate_word("Query"), "Eryquay");
+        }
     }
 }
 
