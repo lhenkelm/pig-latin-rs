@@ -185,8 +185,6 @@ mod tests {
 /// implementation details go here, and exposed function's implementations
 /// that are not intended as default entry points
 mod details {
-    use std::iter;
-        
     /// Return `true` if `c` is an ASCII-vowel, else `false` (uncased).
     fn is_vowel(c: &char) -> bool {
         let c = c.to_ascii_lowercase();
@@ -196,38 +194,72 @@ mod details {
         }
     }
 
+    #[derive(PartialEq,Debug,Copy, Clone)]
+    enum CharCase {
+        Lower,
+        Upper,
+        Eh,
+    }
+
+    impl CharCase {
+        fn from_char(c: &char) -> CharCase {
+            if c.is_lowercase() {
+                CharCase::Lower
+            } else if c.is_uppercase() {
+                CharCase::Upper
+            } else {
+                CharCase::Eh
+            }
+        }
+    }
+
+
     /// Transfer the sequence of upper/lower casing from one string to another.
     /// 
     /// Identifies the sequence of UPPER/lower casing of characters
     /// in `casing_of`, then apply the same casing to `text`.
     /// Apart from the casing, the content of `text` remains unchanged.
     fn apply_casing_like(text: &str, casing_of: &str) -> String {
-        text
-        .chars()
-        .zip(
-            casing_of
-            .chars()
-            .chain(
-                iter::repeat(
-                    casing_of
-                    .chars()
-                    .last()
-                    .unwrap_or(' ') // default in an uncased char
-                )
-            )
-        )
-        .map(
-            |(txt, csg)| {
-                if csg.is_lowercase() {
-                    txt.to_lowercase().to_string()
-                } else if csg.is_uppercase() {
-                    txt.to_uppercase().to_string()
-                } else {
-                    txt.to_string()
+        // FIXME: optimize capacity, decide dynamically?
+        let mut substrings = Vec::with_capacity(8);
+        let mut text_byte_idx = 0;
+        let mut last_edit = 0;
+        let mut target_case = CharCase::Eh;
+        let mut casing_of_chars = casing_of.chars();
+        let mut exhausted = false;
+        for text_char in text.chars() {
+            let text_case = CharCase::from_char(&text_char);
+            if !exhausted {
+                match casing_of_chars.next() {
+                    Some(casing_of_char) => {
+                        target_case = CharCase::from_char(&casing_of_char);
+                    }
+                    None => {
+                        exhausted = true;
+                    }
                 }
             }
-        )
-        .collect()
+            if text_case != target_case && target_case != CharCase::Eh {
+                if text_byte_idx > last_edit {
+                    substrings.push(text[last_edit..text_byte_idx].to_owned());
+                }
+                let end_edit = text_byte_idx+text_char.len_utf8();
+                substrings.push(
+                    match target_case {
+                        CharCase::Upper => text_char.to_uppercase().to_string(),
+                        CharCase::Lower => text_char.to_lowercase().to_string(),
+                        CharCase::Eh => panic!("{target_case:?} should be unreachable here"),
+                    }
+                );
+                last_edit = end_edit;
+            } else if text_byte_idx+1 == text.len() {
+                substrings.push(text[last_edit..text_byte_idx+1].to_owned());
+                 
+            }
+            text_byte_idx += text_char.len_utf8();
+        }
+        // FIXME: try buffer + push
+        substrings.into_iter().collect()
     }
 
     /// # Translate a single english word into Pig-Latin.
