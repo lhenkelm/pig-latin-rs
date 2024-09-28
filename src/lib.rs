@@ -14,8 +14,8 @@
 //!  
 //! ## One True Dialect
 //!
-//!   > Ash nazg durbatulûk, ash nazg gimbatul, ash nazg thrakatulûk, agh burzum-ishi krimpatul  
-//!     -- Inspiration, by [one most humble and demure](https://google.gprivate.com/search.php?search?q=Sauron).
+//! > Ash nazg durbatulûk, ash nazg gimbatul, ash nazg thrakatulûk, agh burzum-ishi krimpatul  
+//! >    -- Inspiration, by [one most humble and demure](https://google.gprivate.com/search.php?search?q=Sauron).
 //!
 //! There exists more than one dialect of Pig-Latin. Because all other dialects
 //! are *stinky*, __incorrect__, ***and annoying***, `pig_latin` implements only the One True
@@ -188,10 +188,7 @@ mod details {
     /// Return `true` if `c` is an ASCII-vowel, else `false` (uncased).
     fn is_vowel(c: &char) -> bool {
         let c = c.to_ascii_lowercase();
-        match c {
-            'a' | 'e' | 'i' | 'o' | 'u' => true,
-            _ => false,
-        }
+        matches!(c, 'a' | 'e' | 'i' | 'o' | 'u')
     }
 
     #[derive(PartialEq, Debug, Copy, Clone)]
@@ -291,14 +288,14 @@ mod details {
     /// assert_eq!(translate_word(""), String::new());
     /// ```
     pub fn translate_word(english_word: &str) -> String {
-        if english_word == "" {
-            return "".to_string();
+        if english_word.is_empty() {
+            return String::new();
         }
         let starts_voweled =
             is_vowel(&english_word.chars().next().expect("got empty english_word"));
         if starts_voweled {
             let mut result = String::with_capacity(english_word.len() + "hay".len());
-            result.push_str(&english_word);
+            result.push_str(english_word);
             result.push_str("hay");
             return result;
         }
