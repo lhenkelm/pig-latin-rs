@@ -303,7 +303,10 @@ mod details {
             .expect("got empty english_word")
         );
         if starts_voweled {
-            return format!("{english_word}hay");
+            let mut result = String::with_capacity(english_word.len() + "hay".len());
+            result.push_str(&english_word);
+            result.push_str("hay");
+            return result;
         }
         let mut byte_idx_cut_at =0;
         for char in english_word.chars() {
