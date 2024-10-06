@@ -89,7 +89,7 @@ use std::iter::once;
 /// );
 /// ```
 pub fn translate(english: &str) -> String {
-    let substring_ranges = once((0, false))
+    let substring_ranges_iter = once((0, false))
         .chain(
             english
                 .match_indices(|c: char| c.is_ascii_punctuation() || c.is_whitespace())
@@ -101,21 +101,22 @@ pub fn translate(english: &str) -> String {
         .chain(once((english.len(), false)))
         .tuple_windows::<(_, _)>()
         .filter(|((from, _), (to, _))| to > from)
-        .map(|((from, is_punct_or_ws), (to, _))| (from, to, is_punct_or_ws))
-        .collect::<Vec<(usize, usize, bool)>>();
-    let capacity =
-        substring_ranges.iter().fold(
-            english.len(),
-            |acc, (_, _, is_punct_or_ws)| {
-                if *is_punct_or_ws {
-                    acc
+        .map(|((from, is_punct_or_ws), (to, _))| (from, to, is_punct_or_ws));
+    let extra_cap: usize = substring_ranges_iter
+        .clone()
+        .map(
+            |(_, _, is_punct_or_ws)| {
+                if is_punct_or_ws {
+                    0_usize
                 } else {
-                    acc + 3
+                    3
                 }
             },
-        );
+        )
+        .sum();
+    let capacity = english.len() + extra_cap;
     let mut translated = String::with_capacity(capacity);
-    for (from, to, is_punct_or_ws) in substring_ranges {
+    for (from, to, is_punct_or_ws) in substring_ranges_iter {
         if !is_punct_or_ws {
             translated.push_str(&translate_word(&english[from..to]));
         } else {
