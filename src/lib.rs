@@ -89,7 +89,11 @@ use std::iter::once;
 /// );
 /// ```
 pub fn translate(english: &str) -> String {
-    // FIXME: a better estimate here?
+    // Note on optimization:
+    //  - a single initial pass to get a data-based capacity estimate seems to cost more
+    //    than the avoidance of re-sizing saves
+    //  - no extra seems to be slower, much more than 60% extra seems to be slower too
+    //  - providing a lower limit for small strings yields no speed gain
     let capacity = (english.len() as f64 * 1.3).floor() as i64 as usize;
     let mut translated = String::with_capacity(capacity);
     let substring_ranges_iter = once((0, false))
