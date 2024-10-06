@@ -270,33 +270,7 @@ mod details {
         result
     }
 
-    /// # Translate a single english word into Pig-Latin.
-    ///
-    /// Translate a single word into [OTDoPL](crate#one-true-dialect) Pig Latin.
-    ///
-    /// The input is assumed to be a single word, and this is not checked.
-    /// "Single word" means that there are no special characters, no whitespace,
-    /// and no punctuation anywhere in the string. In other words, each character
-    /// should be able to be either uppercase or lowercase, and either a vowel or
-    /// a consonant.
-    ///  
-    /// **Hint: If you are not fully able to guarantee single-word inputs,
-    /// use [`crate::translate`] instead.**
-    ///
-    ///  ## Examples
-    ///
-    /// Works fine for words. Don't use it for non-word strings!
-    /// ```rust
-    /// # use pig_latin::translate_word;
-    /// assert_eq!(translate_word("Rar"), String::from("Array"));
-    /// ```
-    ///
-    /// The empty string is, technically, a word in our above technical sense:
-    /// ```rust
-    /// # use pig_latin::translate_word;
-    /// assert_eq!(translate_word(""), String::new());
-    /// ```
-    pub fn translate_word(english_word: &str) -> String {
+    fn translate_word_no_casing(english_word: &str) -> String {
         if english_word.is_empty() {
             return String::new();
         }
@@ -328,6 +302,37 @@ mod details {
         translated.push_str(&english_word[byte_idx_cut_at..]);
         translated.push_str(&english_word[..byte_idx_cut_at]);
         translated.push_str("ay");
+        translated
+    }
+
+    /// # Translate a single english word into Pig-Latin.
+    ///
+    /// Translate a single word into [OTDoPL](crate#one-true-dialect) Pig Latin.
+    ///
+    /// The input is assumed to be a single word, and this is not checked.
+    /// "Single word" means that there are no special characters, no whitespace,
+    /// and no punctuation anywhere in the string. In other words, each character
+    /// should be able to be either uppercase or lowercase, and either a vowel or
+    /// a consonant.
+    ///  
+    /// **Hint: If you are not fully able to guarantee single-word inputs,
+    /// use [`crate::translate`] instead.**
+    ///
+    ///  ## Examples
+    ///
+    /// Works fine for words. Don't use it for non-word strings!
+    /// ```rust
+    /// # use pig_latin::translate_word;
+    /// assert_eq!(translate_word("Rar"), String::from("Array"));
+    /// ```
+    ///
+    /// The empty string is, technically, a word in our above technical sense:
+    /// ```rust
+    /// # use pig_latin::translate_word;
+    /// assert_eq!(translate_word(""), String::new());
+    /// ```
+    pub fn translate_word(english_word: &str) -> String {
+        let translated = translate_word_no_casing(english_word);
         apply_casing_like(&translated, english_word)
     }
 
