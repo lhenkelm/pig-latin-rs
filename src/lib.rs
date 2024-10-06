@@ -89,7 +89,10 @@ use std::iter::once;
 /// );
 /// ```
 pub fn translate(english: &str) -> String {
-    once((0, false))
+    // FIXME: a better estimate here?
+    let capacity = (english.len() as f64 * 1.3).floor() as i64 as usize;
+    let mut translated = String::with_capacity(capacity);
+    let substring_ranges_iter = once((0, false))
         .chain(
             english
                 .match_indices(|c: char| c.is_ascii_punctuation() || c.is_whitespace())
@@ -100,15 +103,15 @@ pub fn translate(english: &str) -> String {
         )
         .chain(once((english.len(), false)))
         .tuple_windows::<(_, _)>()
-        .filter(|((from, _), (to, _))| to > from)
-        .map(|((from, is_punct_or_ws), (to, _))| {
-            if !is_punct_or_ws {
-                translate_word(&english[from..to])
-            } else {
-                english[from..to].to_owned()
-            }
-        })
-        .collect()
+        .filter(|((from, _), (to, _))| to > from);
+    for ((from, is_punct_or_ws), (to, _)) in substring_ranges_iter {
+        if !is_punct_or_ws {
+            translated.push_str(&translate_word(&english[from..to]));
+        } else {
+            translated.push_str(&english[from..to]);
+        }
+    }
+    translated
 }
 
 pub use crate::details::translate_word;
