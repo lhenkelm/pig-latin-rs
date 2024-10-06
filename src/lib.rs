@@ -92,7 +92,7 @@ pub fn translate(english: &str) -> String {
     // FIXME: a better estimate here?
     let capacity = (english.len() as f64 * 1.3).floor() as i64 as usize;
     let mut translated = String::with_capacity(capacity);
-    let substring_ranges_iter = once((0, false))
+    let substring_ranges = once((0, false))
         .chain(
             english
                 .match_indices(|c: char| c.is_ascii_punctuation() || c.is_whitespace())
@@ -103,8 +103,10 @@ pub fn translate(english: &str) -> String {
         )
         .chain(once((english.len(), false)))
         .tuple_windows::<(_, _)>()
-        .filter(|((from, _), (to, _))| to > from);
-    for ((from, is_punct_or_ws), (to, _)) in substring_ranges_iter {
+        .filter(|((from, _), (to, _))| to > from)
+        .map(|((from, is_punct_or_ws), (to, _))| (from, to, is_punct_or_ws))
+        .collect::<Vec<(usize, usize, bool)>>();
+    for (from, to, is_punct_or_ws) in substring_ranges {
         if !is_punct_or_ws {
             translated.push_str(&translate_word(&english[from..to]));
         } else {
