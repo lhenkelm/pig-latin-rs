@@ -106,7 +106,7 @@ pub fn translate(english: &str) -> String {
                 }),
         )
         .chain(once((english.len(), false)))
-        .tuple_windows::<(_, _)>()
+        .tuple_windows::<(_, _)>() // TODO: check if performance impact
         .filter(|((from, _), (to, _))| to > from);
     for ((from, is_punct_or_ws), (to, _)) in substring_ranges_iter {
         if !is_punct_or_ws {
@@ -232,6 +232,7 @@ mod details {
     /// in `casing_of`, then apply the same casing to `text`.
     /// Apart from the casing, the content of `text` remains unchanged.
     fn apply_casing_like(text: &str, casing_of: &str) -> String {
+        // TODO: check if mutating `text` in-place is faster
         let mut result = String::with_capacity(text.len());
         let mut text_byte_idx = 0;
         let mut last_edit = 0;
@@ -304,7 +305,9 @@ mod details {
     /// assert_eq!(translate_word(""), String::new());
     /// ```
     pub fn translate_word(english_word: &str) -> String {
+        // TODO: check speed gain if mutating provided reference instead
         if english_word.is_empty() {
+            // TODO: check if speed-gain if handled in `translate` loop directly instead
             return String::new();
         }
         let starts_voweled =
