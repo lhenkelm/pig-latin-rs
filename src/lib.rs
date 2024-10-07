@@ -210,6 +210,7 @@ mod tests {
 mod details {
     /// Return `true` if `c` is an ASCII-vowel, else `false` (uncased).
     fn is_vowel(c: &char) -> bool {
+        // TODO: explore the wild and wonderous planes of UTF-8 :)
         let c = c.to_ascii_lowercase();
         matches!(c, 'a' | 'e' | 'i' | 'o' | 'u')
     }
