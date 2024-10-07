@@ -382,6 +382,8 @@ mod details {
         #[test]
         fn copy_casing_ligature() {
             assert_eq!(apply_casing_like("ﬁre", "HELLO"), "FIRE");
+            assert_eq!(apply_casing_like("æorlingas", "Ha!"), "Æorlingas");
+            assert_eq!(apply_casing_like("Straße", "TROLOLOLO"), "STRASSE");
         }
 
         #[test]
