@@ -306,10 +306,8 @@ mod details {
     /// Translate a single word into [OTDoPL](crate#one-true-dialect) Pig Latin.
     ///
     /// The input is assumed to be a single word, and this is not checked.
-    /// "Single word" means that there are no special characters, no whitespace,
-    /// and no punctuation anywhere in the string. In other words, each character
-    /// should be able to be either uppercase or lowercase, and either a vowel or
-    /// a consonant.
+    /// "Single word" means that there are no special characters,  that
+    /// "end the word" in the string. Passing an empty string is UB.
     ///  
     /// **Hint: If you are not fully able to guarantee single-word inputs,
     /// use [`crate::translate`] instead.**
@@ -321,18 +319,8 @@ mod details {
     /// # use pig_latin::translate_word;
     /// assert_eq!(translate_word("Rar"), String::from("Array"));
     /// ```
-    ///
-    /// The empty string is, technically, a word in our above technical sense:
-    /// ```rust
-    /// # use pig_latin::translate_word;
-    /// assert_eq!(translate_word(""), String::new());
-    /// ```
     pub fn translate_word(english_word: &str) -> String {
         // TODO: check speed gain if mutating provided reference instead
-        if english_word.is_empty() {
-            // TODO: check if speed-gain if handled in `translate` loop directly instead
-            return String::new();
-        }
         let starts_voweled =
             is_vowel(&english_word.chars().next().expect("got empty english_word"));
         if starts_voweled {
