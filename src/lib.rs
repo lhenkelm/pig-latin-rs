@@ -239,7 +239,22 @@ mod details {
     /// in `casing_of`, then apply the same casing to `text`.
     /// Apart from the casing, the content of `text` remains unchanged.
     fn apply_casing_like(text: &str, casing_of: &str) -> String {
-        // TODO: check if mutating `text` in-place is faster
+        // Note: if we assume text to just be the ASCII-subset, we could use ASCII
+        // methods that go byte->byte. This would enable an optimisation where we
+        // do not allocate a new String to return, instead modifying a mutable
+        // reference in-place. However, in general, the upper/lower case variant
+        // of some unicode scalar may have more bytes: e.g., there are lower-case
+        // ligatures (1 scalar) whose upper-cased equivalent is two scalars long:
+        // ﬁ -> FI
+        // ß -> SS
+        // etc. These cases mean that applying the above optimisation would need to
+        // preserve later bytes' information by shifting the string contents,
+        // (requiring in the worst case O(N^2) allocations !), or copying
+        // the old strings values into a temporary buffer. In either case,
+        // we are not avoiding allocations.
+        // We may however consider _checking_ for the ASCII subset and switching to
+        // the faster method (once we have a sufficient set of benchmarks for
+        // both implementations)
         let mut result = String::with_capacity(text.len());
         let mut text_byte_idx = 0;
         let mut last_edit = 0;
