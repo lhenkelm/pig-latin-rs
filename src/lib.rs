@@ -47,7 +47,6 @@
 //! assert_eq!(pig_latin::translate(&english_input), expected_pig_latin);
 //! ```
 
-use itertools::Itertools;
 use std::iter::once;
 
 /// # Translate English into Pig-Latin.
@@ -89,13 +88,6 @@ use std::iter::once;
 /// );
 /// ```
 pub fn translate(english: &str) -> String {
-    // Note on optimization:
-    //  - a single initial pass to get a data-based capacity estimate seems to cost more
-    //    than the avoidance of re-sizing saves
-    //  - no extra seems to be slower, much more than 60% extra seems to be slower too
-    //  - providing a lower limit for small strings yields no speed gain
-    let capacity = (english.len() as f64 * 1.3).floor() as i64 as usize;
-    let mut translated = String::with_capacity(capacity);
     let substring_ranges_iter = once((0, false))
         .chain(
             english
@@ -105,11 +97,26 @@ pub fn translate(english: &str) -> String {
                     once((match_start, true)).chain(once((match_end, false)))
                 }),
         )
-        .chain(once((english.len(), false)))
-        .tuple_windows::<(_, _)>() // TODO: check if performance impact
-        .filter(|((from, _), (to, _))| to > from);
-    for ((from, is_punct_or_ws), (to, _)) in substring_ranges_iter {
-        if !is_punct_or_ws {
+        .chain(once((english.len(), false)));
+    let mut last_match_idx = 0;
+    let mut last_is_punct_or_ws = false;
+    // Note on optimization:
+    //  - a single initial pass to get a data-based capacity estimate seems to cost more
+    //    than the avoidance of re-sizing saves
+    //  - no extra seems to be slower, much more than 60% extra seems to be slower too
+    //  - providing a lower limit for small strings yields no speed gain
+    let capacity = (english.len() as f64 * 1.3).floor() as i64 as usize;
+    let mut translated = String::with_capacity(capacity);
+    for (match_idx, is_punct_or_ws) in substring_ranges_iter {
+        let from = last_match_idx;
+        let to = match_idx;
+        let from_is_punct_or_ws = last_is_punct_or_ws;
+        last_match_idx = match_idx;
+        last_is_punct_or_ws = is_punct_or_ws;
+        if !(to > from) {
+            continue;
+        }
+        if !from_is_punct_or_ws {
             translated.push_str(&translate_word(&english[from..to]));
         } else {
             translated.push_str(&english[from..to]);
