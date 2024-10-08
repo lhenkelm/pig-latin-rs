@@ -322,13 +322,12 @@ mod details {
     pub fn translate_word(english_word: &str) -> String {
         // TODO: check speed gain if mutating provided reference instead
         let byte_idx_cut_at = byte_idx_starting_consonants(&english_word);
+        let mut translated = String::with_capacity(english_word.len() + "hay".len());
         // starts with a vowel
         if byte_idx_cut_at == 0 {
-            let mut result = String::with_capacity(english_word.len() + "hay".len());
-            translate_word_starts_voweled(&english_word, &mut result);
-            return result;
+            translate_word_starts_voweled(&english_word, &mut translated);
+            return translated;
         }
-        let mut translated = String::with_capacity(english_word.len() + "ay".len());
         translate_word_starts_consonant(&english_word, byte_idx_cut_at, &mut translated);
         apply_casing_like(&translated, english_word)
     }
