@@ -258,6 +258,11 @@ mod details {
         // the faster method (once we have a sufficient set of benchmarks for
         // both implementations)
         let mut result = String::with_capacity(text.len());
+        apply_casing_like_inplace(text, casing_of, &mut result);
+        result
+    }
+
+    fn apply_casing_like_inplace(text: &str, casing_of: &str, result: &mut String) -> () {
         let mut text_byte_idx = 0;
         let mut last_edit = 0;
         let mut target_case = CharCase::Eh;
@@ -299,7 +304,6 @@ mod details {
             }
             text_byte_idx += text_char.len_utf8();
         }
-        result
     }
 
     /// # Translate a single english word into Pig-Latin.
@@ -334,11 +338,8 @@ mod details {
             translate_word_starts_voweled(&english_word, translated);
             return;
         }
-        let temp: String = apply_casing_like(
-            &translate_word_starts_consonant(&english_word, byte_idx_cut_at),
-            english_word,
-        );
-        translated.push_str(&temp);
+        let temp = translate_word_starts_consonant(&english_word, byte_idx_cut_at);
+        apply_casing_like_inplace(&temp, english_word, translated);
     }
 
     /// Apply the translation rule for words beginning with a vowel.
