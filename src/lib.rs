@@ -328,7 +328,7 @@ mod details {
         if starts_voweled(english_word) {
             let mut result = String::with_capacity(english_word.len() + "hay".len());
             result.push_str(english_word);
-            result.push_str("hay");
+            translate_word_starts_voweled(&mut result);
             return result;
         }
         let mut byte_idx_cut_at = 0;
@@ -352,6 +352,10 @@ mod details {
         translated.push_str(&english_word[..byte_idx_cut_at]);
         translated.push_str("ay");
         apply_casing_like(&translated, english_word)
+    }
+
+    fn translate_word_starts_voweled(english_word: &mut String) -> () {
+        english_word.push_str("hay");
     }
 
     #[cfg(test)]
