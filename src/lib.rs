@@ -301,6 +301,10 @@ mod details {
         result
     }
 
+    fn starts_voweled(word: &str) -> bool {
+        is_vowel(&word.chars().next().expect("got empty `word`"))
+    }
+
     /// # Translate a single english word into Pig-Latin.
     ///
     /// Translate a single word into [OTDoPL](crate#one-true-dialect) Pig Latin.
@@ -321,9 +325,7 @@ mod details {
     /// ```
     pub fn translate_word(english_word: &str) -> String {
         // TODO: check speed gain if mutating provided reference instead
-        let starts_voweled =
-            is_vowel(&english_word.chars().next().expect("got empty english_word"));
-        if starts_voweled {
+        if starts_voweled(english_word) {
             let mut result = String::with_capacity(english_word.len() + "hay".len());
             result.push_str(english_word);
             result.push_str("hay");
