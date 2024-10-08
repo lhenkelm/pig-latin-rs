@@ -262,6 +262,7 @@ mod details {
         result
     }
 
+    #[inline]
     fn apply_casing_like_inplace(text: &str, casing_of: &str, result: &mut String) -> () {
         let mut text_byte_idx = 0;
         let mut last_edit = 0;
@@ -331,6 +332,7 @@ mod details {
         translated
     }
 
+    #[inline]
     pub fn translate_word_inplace(english_word: &str, translated: &mut String) -> () {
         let byte_idx_cut_at = byte_idx_starting_consonants(&english_word);
         // starts with a vowel
@@ -350,6 +352,7 @@ mod details {
     /// Args:
     ///  - `english_word`: the input
     ///  - `translated`: the mutable output, will be appended to
+    #[inline]
     fn translate_word_starts_voweled(english_word: &str, translated: &mut String) -> () {
         translated.push_str(english_word);
         translated.push_str("hay");
@@ -360,6 +363,7 @@ mod details {
     /// This is important to the rule for translating words starting with consonants.
     /// This index identifies the cut separating the initial-consonant-substring to move
     /// towards the back, from the unchanged core of the word to be left in place.
+    #[inline]
     fn byte_idx_starting_consonants(english_word: &str) -> usize {
         let mut byte_idx_cut_at = 0;
         for char in english_word.chars() {
@@ -391,6 +395,7 @@ mod details {
     /// Args:
     ///  - `english_word`: the input string
     ///  - `byte_idx_cut_at`: the index into the string at which the first vowel is found
+    #[inline]
     fn translate_word_starts_consonant(english_word: &str, byte_idx_cut_at: usize) -> String {
         let mut translated = String::with_capacity(english_word.len() + "ay".len());
         translated.push_str(&english_word[byte_idx_cut_at..]);
