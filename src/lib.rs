@@ -117,7 +117,7 @@ pub fn translate(english: &str) -> String {
             continue;
         }
         if !from_is_punct_or_ws {
-            translated.push_str(&translate_word(&english[from..to]));
+            translate_word_inplace(&english[from..to], &mut translated);
         } else {
             translated.push_str(&english[from..to]);
         }
@@ -126,6 +126,7 @@ pub fn translate(english: &str) -> String {
 }
 
 pub use crate::details::translate_word;
+use crate::details::translate_word_inplace;
 
 #[cfg(test)]
 mod tests {
@@ -321,15 +322,23 @@ mod details {
     /// ```
     pub fn translate_word(english_word: &str) -> String {
         // TODO: check speed gain if mutating provided reference instead
-        let byte_idx_cut_at = byte_idx_starting_consonants(&english_word);
         let mut translated = String::with_capacity(english_word.len() + "hay".len());
+        translate_word_inplace(english_word, &mut translated);
+        translated
+    }
+
+    pub fn translate_word_inplace(english_word: &str, translated: &mut String) -> () {
+        let byte_idx_cut_at = byte_idx_starting_consonants(&english_word);
         // starts with a vowel
         if byte_idx_cut_at == 0 {
-            translate_word_starts_voweled(&english_word, &mut translated);
-            return translated;
+            translate_word_starts_voweled(&english_word, translated);
+            return;
         }
-        translate_word_starts_consonant(&english_word, byte_idx_cut_at, &mut translated);
-        apply_casing_like(&translated, english_word)
+        let temp: String = apply_casing_like(
+            &translate_word_starts_consonant(&english_word, byte_idx_cut_at),
+            english_word,
+        );
+        translated.push_str(&temp);
     }
 
     /// Apply the translation rule for words beginning with a vowel.
@@ -381,15 +390,12 @@ mod details {
     /// Args:
     ///  - `english_word`: the input string
     ///  - `byte_idx_cut_at`: the index into the string at which the first vowel is found
-    ///  - `translated`: the mutable output, will be appended to
-    fn translate_word_starts_consonant(
-        english_word: &str,
-        byte_idx_cut_at: usize,
-        translated: &mut String,
-    ) -> () {
+    fn translate_word_starts_consonant(english_word: &str, byte_idx_cut_at: usize) -> String {
+        let mut translated = String::with_capacity(english_word.len() + "ay".len());
         translated.push_str(&english_word[byte_idx_cut_at..]);
         translated.push_str(&english_word[..byte_idx_cut_at]);
         translated.push_str("ay");
+        translated
     }
 
     #[cfg(test)]
