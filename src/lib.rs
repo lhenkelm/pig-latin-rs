@@ -331,6 +331,19 @@ mod details {
             translate_word_starts_voweled(&mut result);
             return result;
         }
+        let byte_idx_cut_at = byte_idx_starting_consonants(&english_word);
+        let mut translated = String::with_capacity(english_word.len() + "ay".len());
+        translated.push_str(&english_word[byte_idx_cut_at..]);
+        translated.push_str(&english_word[..byte_idx_cut_at]);
+        translated.push_str("ay");
+        apply_casing_like(&translated, english_word)
+    }
+
+    fn translate_word_starts_voweled(english_word: &mut String) -> () {
+        english_word.push_str("hay");
+    }
+
+    fn byte_idx_starting_consonants(english_word: &str) -> usize {
         let mut byte_idx_cut_at = 0;
         for char in english_word.chars() {
             if is_vowel(&char) {
@@ -347,15 +360,7 @@ mod details {
                 byte_idx_cut_at += 'u'.len_utf8();
             };
         }
-        let mut translated = String::with_capacity(english_word.len() + "ay".len());
-        translated.push_str(&english_word[byte_idx_cut_at..]);
-        translated.push_str(&english_word[..byte_idx_cut_at]);
-        translated.push_str("ay");
-        apply_casing_like(&translated, english_word)
-    }
-
-    fn translate_word_starts_voweled(english_word: &mut String) -> () {
-        english_word.push_str("hay");
+        byte_idx_cut_at
     }
 
     #[cfg(test)]
