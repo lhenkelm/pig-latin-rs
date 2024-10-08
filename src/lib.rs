@@ -125,8 +125,8 @@ pub fn translate(english: &str) -> String {
     translated
 }
 
-pub use crate::details::translate_word;
 use crate::details::translate_word_inplace;
+pub use crate::details::{apply_casing_like, translate_word};
 
 #[cfg(test)]
 mod tests {
@@ -240,7 +240,7 @@ mod details {
     /// Identifies the sequence of UPPER/lower casing of characters
     /// in `casing_of`, then apply the same casing to `text`.
     /// Apart from the casing, the content of `text` remains unchanged.
-    fn apply_casing_like(text: &str, casing_of: &str) -> String {
+    pub fn apply_casing_like(text: &str, casing_of: &str) -> String {
         // Note: if we assume text to just be the ASCII-subset, we could use ASCII
         // methods that go byte->byte. This would enable an optimisation where we
         // do not allocate a new String to return, instead modifying a mutable
