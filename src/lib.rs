@@ -325,14 +325,11 @@ mod details {
         // starts with a vowel
         if byte_idx_cut_at == 0 {
             let mut result = String::with_capacity(english_word.len() + "hay".len());
-            result.push_str(english_word);
-            translate_word_starts_voweled(&mut result);
+            translate_word_starts_voweled(&english_word, &mut result);
             return result;
         }
         let mut translated = String::with_capacity(english_word.len() + "ay".len());
-        translated.push_str(&english_word[byte_idx_cut_at..]);
-        translated.push_str(&english_word[..byte_idx_cut_at]);
-        translated.push_str("ay");
+        translate_word_starts_consonant(&english_word, byte_idx_cut_at, &mut translated);
         apply_casing_like(&translated, english_word)
     }
 
@@ -340,8 +337,13 @@ mod details {
     ///
     /// Does NOT check whether the rule applies to the string,
     /// nor wether the string represents a single word.
-    fn translate_word_starts_voweled(english_word: &mut String) -> () {
-        english_word.push_str("hay");
+    ///
+    /// Args:
+    ///  - `english_word`: the input
+    ///  - `translated`: the mutable output, will be appended to
+    fn translate_word_starts_voweled(english_word: &str, translated: &mut String) -> () {
+        translated.push_str(english_word);
+        translated.push_str("hay");
     }
 
     /// Find the index to the byte (UTF-8) at which the first vowel appears in the string.
@@ -370,6 +372,25 @@ mod details {
             };
         }
         byte_idx_cut_at
+    }
+
+    /// Translate a word according to the rule for words starting with consonants.
+    ///
+    /// Does NOT check whether the rule applies to the string,
+    /// nor wether the string represents a single word.
+    ///
+    /// Args:
+    ///  - `english_word`: the input string
+    ///  - `byte_idx_cut_at`: the index into the string at which the first vowel is found
+    ///  - `translated`: the mutable output, will be appended to
+    fn translate_word_starts_consonant(
+        english_word: &str,
+        byte_idx_cut_at: usize,
+        translated: &mut String,
+    ) -> () {
+        translated.push_str(&english_word[byte_idx_cut_at..]);
+        translated.push_str(&english_word[..byte_idx_cut_at]);
+        translated.push_str("ay");
     }
 
     #[cfg(test)]
