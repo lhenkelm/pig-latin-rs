@@ -301,6 +301,7 @@ mod details {
         result
     }
 
+    /// `true` if the first char is a vowel, else `false`
     fn starts_voweled(word: &str) -> bool {
         is_vowel(&word.chars().next().expect("got empty `word`"))
     }
@@ -339,10 +340,19 @@ mod details {
         apply_casing_like(&translated, english_word)
     }
 
+    /// Apply the translation rule for words beginning with a vowel.
+    ///
+    /// Does NOT check whether the rule applies to the string,
+    /// nor wether the string represents a single word.
     fn translate_word_starts_voweled(english_word: &mut String) -> () {
         english_word.push_str("hay");
     }
 
+    /// Find the index to the byte (UTF-8) at which the first vowel appears in the string.
+    ///
+    /// This is important to the rule for translating words starting with consonants.
+    /// This index identifies the cut separating the initial-consonant-substring to move
+    /// towards the back, from the unchanged core of the word to be left in place.
     fn byte_idx_starting_consonants(english_word: &str) -> usize {
         let mut byte_idx_cut_at = 0;
         for char in english_word.chars() {
@@ -352,6 +362,9 @@ mod details {
             byte_idx_cut_at += char.len_utf8();
         }
 
+        // "q" on its own is not usual in english. To make translations more
+        // pronouncable, move "qu" as a unit (the "first vowel" is then not "u",
+        // but the following character, even if not a vowel itself)
         if english_word.len() > byte_idx_cut_at {
             let mut chars = english_word[..byte_idx_cut_at + 1].chars();
             if chars.next().unwrap().to_ascii_lowercase() == 'q'
