@@ -7,7 +7,9 @@ use pig_latin::translate;
 /// Reads from stdin until end of file (EOF) then translates all of it,
 /// printing the translation to stdout. Useful to translate large volumes
 /// of text quickly.
-///  
+///
+/// ## Usage
+///
 /// ```shell
 /// $ echo 'Hello World!
 /// This is a second line. This is still the second line.
@@ -19,7 +21,10 @@ use pig_latin::translate;
 /// Ellohay Orldway!
 /// Isthay ishay ahay econdsay inelay. Isthay ishay illstay ethay econdsay inelay.
 /// Evenhay oremay ineslay. Ihay onderway ifhay erethay ishay ahay imitlay ...
-/// ```  
+/// ```
+/// ## Translation details
+///
+/// See the library crate [`pig_latin`]
 fn main() -> io::Result<()> {
     let input_text = read_all_stdin()?;
     let translated = translate(&input_text);

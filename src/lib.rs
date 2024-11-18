@@ -46,6 +46,15 @@
 //!
 //! assert_eq!(pig_latin::translate(&english_input), expected_pig_latin);
 //! ```
+//!
+//! ## Binaries/executables
+//!
+//! 1. For a command line interface to the [`translate`] function, see [`pig`](../pig/fn.main.html).
+//! 2. For a binary that is useful for profiling this library, see [`lorem_ipsum_profiling`](../lorem_ipsum_profiling/fn.main.html).
+//! 3. For benchmarking the performance of this library, there is a [`criterion`][criterion-url]-based benchmark (See `benches/translation_benchmark.rs`).
+//!    The benchmark can be run using `cargo bench`.
+//!
+//! [criterion-url]: https://bheisler.github.io/criterion.rs/book/index.html
 
 use std::iter::once;
 

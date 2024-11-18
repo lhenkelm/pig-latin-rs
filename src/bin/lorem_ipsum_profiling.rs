@@ -6,6 +6,13 @@ use rand_pcg::Pcg64Mcg;
 
 use pig_latin::translate;
 
+/// # Translate long lorem ipsum for profiling
+///
+/// Generate 4 million words of pseudo-random lorem-ipsum-ish input text,
+/// and translate it into pig latin. This is a useful binary for profiling
+/// the core functionality of the [`pig_latin`] crate.
+///
+/// For micro-benchmarking, see benches/translation_benchmark.rs instead.
 fn main() {
     let mut total_in_bytes = 0;
     let mut total_out_bytes = 0;
