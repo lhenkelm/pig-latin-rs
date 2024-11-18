@@ -2,7 +2,7 @@
 name = "pig_latin"
 version = "0.1.0"
 edition = "2021"
-default-run="pig_latin"
+default-run="pig"
 
 [dependencies]
 criterion = { version = "0.4", features = ["html_reports"] }
@@ -20,8 +20,8 @@ harness = false
 bench=false
 
 [[bin]]
-name="pig_latin"
-src="src/main.rs"
+name="pig"
+src="src/bin/pig.rs"
 bench=false
 
 [[bin]]
